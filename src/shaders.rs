@@ -1,12 +1,12 @@
 use miniquad::*;
 
-pub const VERTEX: &str = r#"#version 100
+pub const VERTEX: &str = r#"#version 330
 attribute vec3 pos;
 attribute vec2 uv;
 attribute vec4 col;
 
 uniform vec3 playerpos;
-uniform vec3 playerdir;
+uniform vec2 playerdir;
 
 varying lowp vec2 texcoord;
 varying lowp vec4 cols;
@@ -36,21 +36,21 @@ void main() {
     d = distance(playerpos, pos);
     bt = pi/2.0 - acos((pos.z-playerpos.z)/d);
     theta = angle_to_range(pi, asp * fov/2.0 + playerdir.y - bt);
-    v = 0.5 - theta/fov;
+    v = 0.5 - theta/fov/asp;
 
-    gl_Position = vec4(u, v, 0.0, 1);
+    gl_Position = vec4(u, v, 0, 1);
     texcoord = uv;
     cols = col;
 }"#;
 
-pub const FRAGMENT: &str = r#"#version 100
+pub const FRAGMENT: &str = r#"#version 330
 varying lowp vec2 texcoord;
 varying lowp vec4 cols;
 
 uniform sampler2D tex;
 
 void main() {
-    gl_FragColor = (cols+texture2D(tex, texcoord))/2.0;
+    gl_FragColor = texture(tex, texcoord);
 }"#;
 
 pub fn meta() -> ShaderMeta {

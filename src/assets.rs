@@ -14,7 +14,7 @@ impl Ass {
     pub async fn load() -> Ass {
         Ass {
             font_main: load_ttf_font("resources/times.ttf").await.unwrap(),
-            wall_atlas: image::open(Path::new("resources/texture.png"))
+            wall_atlas: image::open(Path::new("resources/walls.png"))
                 .unwrap()
                 .to_rgba8(),
             floor_image: image::open(Path::new("resources/walls.png"))
