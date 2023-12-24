@@ -4,6 +4,7 @@ mod assets;
 mod settings;
 mod shaders;
 mod stage;
+mod player;
 
 fn window_conf() -> Conf {
     Conf {
@@ -19,6 +20,7 @@ fn window_conf() -> Conf {
 async fn main() {
     let ass = assets::Ass::load().await;
 
+    let mut player = player::Player::new();
 
     let stage = {
         let InternalGlContext {
@@ -39,6 +41,8 @@ async fn main() {
     loop {
         clear_background(Color::from_rgba(135, 206, 235, 255));
 
+        player.walk();
+
         //Render some primitives in camera space
 
         {
@@ -55,23 +59,24 @@ async fn main() {
 
             gl.quad_context
                 .apply_uniforms(miniquad::UniformsSource::table(&shaders::Uniforms {
-                    offset: (0.0, 0.0),
+                    playerpos: (player.position.x, player.position.y, player.position.z),
+                    playerdir: (player.position.a, player.position.b),
                 }));
             gl.quad_context.draw(0, 6, 1);
 
             gl.quad_context.end_render_pass();
         }
         
-        draw_words(&t_par);
+        draw_words(&t_par, &player);
 
         next_frame().await
     }
 }
 
-fn draw_words(t_par: &TextParams) {
-    draw_rectangle(10.0, 10.0, 220.0, 100.0, WHITE);
-    draw_rectangle_lines(10.0, 10.0, 220.0, 100.0, 4.0, BLACK);
-    draw_text_ex("OpenGL Render", 20.0, 40.0, t_par.clone());
+fn draw_words(t_par: &TextParams, player: &player::Player) {
+    draw_rectangle(10.0, 10.0, 220.0, 140.0, WHITE);
+    draw_rectangle_lines(10.0, 10.0, 220.0, 140.0, 4.0, BLACK);
+    draw_text_ex("Open GL Render", 20.0, 40.0, t_par.clone());
     let fps = get_fps();
     let mut fps_display = fps;
     if fps > 50 && fps < 70 {
@@ -81,6 +86,13 @@ fn draw_words(t_par: &TextParams) {
         &format!("FPS is {}", fps_display),
         20.0,
         70.0,
+        t_par.to_owned(),
+    );
+    draw_text_ex("Player position:", 20.0, 100.0, t_par.to_owned());
+    draw_text_ex(
+        &format!("({:.1},{:.1})", player.position.x, player.position.y),
+        20.0,
+        130.0,
         t_par.to_owned(),
     );
 }

@@ -39,13 +39,13 @@ impl Stage {
     pub async fn new(ctx: &mut dyn RenderingBackend, ass: &assets::Ass) -> Stage {
         #[rustfmt::skip]
             let quad: [Vertex; 4] = [
-                Vertex { pos : Vec3 { x: 0.5, y: 0.5, z: 0.0 }, uv: Vec2 { x: 1., y: 3./5. },
+                Vertex { pos : Vec3 { x: 5.0, y: 5.0, z: 1.0 }, uv: Vec2 { x: 1., y: 3./5. },
                     col: Vec4{x: 1.0, y: 0.0, z: 0.0, w: 1.0} }, // top right
-                Vertex { pos : Vec3 { x: 0.5, y: -0.5, z: 0.0 }, uv: Vec2 { x: 1., y: 2./5. },
+                Vertex { pos : Vec3 { x: 5.0, y: 5.0, z: 0.0 }, uv: Vec2 { x: 1., y: 2./5. },
                     col: Vec4{x: 1.0, y: 1.0, z: 0.0, w: 1.0} }, // bottom right
-                Vertex { pos : Vec3 { x: -0.5, y: -0.5, z: 0.0 }, uv: Vec2 { x: 0., y: 2./5. },
+                Vertex { pos : Vec3 { x: 4.0, y:5.0, z: 0.0 }, uv: Vec2 { x: 0., y: 2./5. },
                     col: Vec4{x: 0.0, y: 1.0, z: 0.0, w: 1.0} }, // bottom left
-                Vertex { pos : Vec3 { x: -0.5, y: 0.5, z: 0.0 }, uv: Vec2 { x: 0., y: 3./5. } ,
+                Vertex { pos : Vec3 { x: 4.0, y: 5.0, z: 1.0 }, uv: Vec2 { x: 0., y: 3./5. } ,
                     col: Vec4{x: 0.0, y: 0.0, z: 1.0, w: 1.0} }, // top left 
             ];
         let vertex_buffer = ctx.new_buffer(
