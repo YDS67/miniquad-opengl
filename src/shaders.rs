@@ -8,20 +8,20 @@ attribute vec4 col;
 uniform vec3 playerpos;
 uniform vec2 playerdir;
 
-varying lowp vec2 texcoord;
+varying lowp vec3 texcoord;
 varying lowp vec4 cols;
 
 float pi, fov, asp, dxy, at, phi, u, d, bt, theta, v;
 
-float angle_to_range(float pi, float a) {
-    while (a < -pi/2.0) {
-        a += 2.0*pi;
-    };
-    while (a > pi/2.0) {
-        a -= 2.0*pi;
-    };
-    return a;
-};
+// float angle_to_range(float pi, float a) {
+//     while (a <= -pi/2.0) {
+//         a += 2.0*pi;
+//     };
+//     while (a >= pi/2.0) {
+//         a -= 2.0*pi;
+//     };
+//     return a;
+// };
 
 void main() {
     pi = 3.1415926538;
@@ -30,27 +30,33 @@ void main() {
 
     dxy = distance(playerpos.xy, pos.xy);
     at = sign(pos.y-playerpos.y) * acos((pos.x-playerpos.x)/dxy);
-    phi = angle_to_range(pi, fov/2.0 + playerdir.x - at);
-    u = phi/fov - 0.5;
+    phi = fov/2.0 + playerdir.x - at;
+    u = 2.0 * sin(playerdir.x - at);
 
     d = distance(playerpos, pos);
     bt = pi/2.0 - acos((pos.z-playerpos.z)/d);
-    theta = angle_to_range(pi, asp * fov/2.0 + playerdir.y - bt);
-    v = 0.5 - theta/fov/asp;
+    theta = asp * fov/2.0 + playerdir.y - bt;
+    v = 2.0 / asp * sin(playerdir.y - bt);
 
     gl_Position = vec4(u, v, 0, 1);
-    texcoord = uv;
-    cols = col;
+    texcoord = vec3(uv,1.0);
+
+    if (phi < 0.0 || phi > fov || theta < 0.0 || theta > asp * fov) {
+        cols = vec4(1.0,1.0,1.0,0.0);
+    } else {
+        cols = col;
+    };
+    
 }"#;
 
 pub const FRAGMENT: &str = r#"#version 330
-varying lowp vec2 texcoord;
+varying lowp vec3 texcoord;
 varying lowp vec4 cols;
 
 uniform sampler2D tex;
 
 void main() {
-    gl_FragColor = texture(tex, texcoord);
+    gl_FragColor = textureProj(tex, texcoord);
 }"#;
 
 pub fn meta() -> ShaderMeta {
