@@ -62,7 +62,7 @@ async fn main() {
                     playerpos: (player.position.x, player.position.y, player.position.z),
                     playerdir: (player.position.a, player.position.b),
                 }));
-            gl.quad_context.draw(0, 18, 1);
+            gl.quad_context.draw(0, 36, 1);
 
             gl.quad_context.end_render_pass();
         }

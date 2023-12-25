@@ -38,7 +38,7 @@ pub struct Stage {
 impl Stage {
     pub async fn new(ctx: &mut dyn RenderingBackend, ass: &assets::Ass) -> Stage {
         #[rustfmt::skip]
-            let quad: [Vertex; 12] = [
+            let quad: [Vertex; 15] = [
                 Vertex { pos : Vec3 { x: 5.0, y: 5.0, z: 1.0 }, uv: Vec2 { x: 1., y: 3./5. },
                                                                 col: Vec4{x: 1.0, y: 0.0, z: 0.0, w: 1.0} }, // top right
                 Vertex { pos : Vec3 { x: 5.0, y: 5.0, z: 0.0 }, uv: Vec2 { x: 1., y: 2./5. },
@@ -47,6 +47,9 @@ impl Stage {
                                                                 col: Vec4{x: 0.0, y: 1.0, z: 0.0, w: 1.0} }, // bottom left
                 Vertex { pos : Vec3 { x: 4.0, y: 5.0, z: 1.0 }, uv: Vec2 { x: 0., y: 3./5. } ,
                                                                 col: Vec4{x: 0.0, y: 0.0, z: 1.0, w: 1.0} }, // top left 
+                Vertex { pos : Vec3 { x: 4.5, y: 5.0, z: 0.5 }, uv: Vec2 { x: 0.5, y: 2.5/5. } ,
+                                                                col: Vec4{x: 0.0, y: 0.0, z: 1.0, w: 1.0} }, // center
+
                 Vertex { pos : Vec3 { x: 4.0, y: 5.0, z: 1.0 }, uv: Vec2 { x: 1., y: 3./5. },
                                                                 col: Vec4{x: 1.0, y: 0.0, z: 0.0, w: 1.0} }, // top right
                 Vertex { pos : Vec3 { x: 4.0, y: 5.0, z: 0.0 }, uv: Vec2 { x: 1., y: 2./5. },
@@ -55,6 +58,9 @@ impl Stage {
                                                                 col: Vec4{x: 0.0, y: 1.0, z: 0.0, w: 1.0} }, // bottom left
                 Vertex { pos : Vec3 { x: 3.0, y: 5.0, z: 1.0 }, uv: Vec2 { x: 0., y: 3./5. } ,
                                                                 col: Vec4{x: 0.0, y: 0.0, z: 1.0, w: 1.0} }, // top left 
+                Vertex { pos : Vec3 { x: 3.5, y: 5.0, z: 0.5 }, uv: Vec2 { x: 0.5, y: 2.5/5. } ,
+                                                                col: Vec4{x: 0.0, y: 0.0, z: 1.0, w: 1.0} }, // center
+
                 Vertex { pos : Vec3 { x: 3.0, y: 5.0, z: 1.0 }, uv: Vec2 { x: 1., y: 3./5. },
                                                                 col: Vec4{x: 1.0, y: 0.0, z: 0.0, w: 1.0} }, // top right
                 Vertex { pos : Vec3 { x: 3.0, y: 5.0, z: 0.0 }, uv: Vec2 { x: 1., y: 2./5. },
@@ -63,6 +69,8 @@ impl Stage {
                                                                 col: Vec4{x: 0.0, y: 1.0, z: 0.0, w: 1.0} }, // bottom left
                 Vertex { pos : Vec3 { x: 2.0, y: 5.0, z: 1.0 }, uv: Vec2 { x: 0., y: 3./5. } ,
                                                                 col: Vec4{x: 0.0, y: 0.0, z: 1.0, w: 1.0} }, // top left 
+                Vertex { pos : Vec3 { x: 2.5, y: 5.0, z: 0.5 }, uv: Vec2 { x: 0.5, y: 2.5/5. } ,
+                                                                col: Vec4{x: 0.0, y: 0.0, z: 1.0, w: 1.0} }, // center
             ];
         let vertex_buffer = ctx.new_buffer(
             BufferType::VertexBuffer,
@@ -70,10 +78,13 @@ impl Stage {
             BufferSource::slice(&quad),
         );
 
-        let indices: [u16; 18] = [
-            0, 1, 3, 1, 2, 3,
-            4, 5, 7, 5, 6, 7,
-            8, 9, 11, 9, 10, 11,
+        let indices: [u16; 36] = [
+            0, 1, 4, 1, 2, 4,
+            2, 3, 4, 3, 0, 4,
+            5, 6, 9, 6, 7, 9,
+            7, 8, 9, 8, 5, 9,
+            10, 11, 14, 11, 12, 14,
+            12, 13, 14, 13, 10, 14,
             ];
         let index_buffer = ctx.new_buffer(
             BufferType::IndexBuffer,
