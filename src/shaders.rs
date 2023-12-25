@@ -31,12 +31,12 @@ void main() {
     dxy = distance(playerpos.xy, pos.xy);
     at = sign(pos.y-playerpos.y) * acos((pos.x-playerpos.x)/dxy);
     phi = fov/2.0 + playerdir.x - at;
-    u = 2.0 * sin(playerdir.x - at);
+    u = 2.0 * sin(playerdir.x - at)/sin(fov/2.0);
 
     d = distance(playerpos, pos);
     bt = pi/2.0 - acos((pos.z-playerpos.z)/d);
     theta = asp * fov/2.0 + playerdir.y - bt;
-    v = 2.0 / asp * sin(playerdir.y - bt);
+    v = 2.0 * sin(playerdir.y - bt)/sin(fov*asp/2.0);
 
     gl_Position = vec4(u, v, 0, 1);
     texcoord = vec3(uv,1.0);
@@ -56,7 +56,11 @@ varying lowp vec4 cols;
 uniform sampler2D tex;
 
 void main() {
-    gl_FragColor = textureProj(tex, texcoord);
+    if (cols.w < 1.0) {
+        discard;
+    } else {
+        gl_FragColor = textureProj(tex, texcoord);
+    }
 }"#;
 
 pub fn meta() -> ShaderMeta {
