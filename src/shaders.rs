@@ -8,8 +8,8 @@ attribute vec4 col;
 uniform vec3 playerpos;
 uniform vec4 playerdir;
 
-varying lowp vec3 texcoord;
-varying lowp vec4 cols;
+varying vec3 texcoord;
+varying vec4 cols;
 
 const float pi = 3.1415926538;
 const float fov = pi/4.0;
@@ -36,7 +36,7 @@ void main() {
     v = 2.0*sin(bt)/sin(fov*asp);
 
     gl_Position = vec4(u, v, 0, 1);
-    texcoord = vec3(uv,1.0);
+    texcoord = vec3(uv/length(dir2),1.0/length(dir2));
 
     if (at < -1.4*fov || at > 1.4*fov || bt < -1.4*fov*asp || bt > 1.4*fov*asp) {
         cols = vec4(1.0,1.0,1.0,0.0);
@@ -47,8 +47,8 @@ void main() {
 }"#;
 
 pub const FRAGMENT: &str = r#"#version 330
-varying lowp vec3 texcoord;
-varying lowp vec4 cols;
+varying vec3 texcoord;
+varying vec4 cols;
 
 uniform sampler2D tex;
 
