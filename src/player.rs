@@ -99,6 +99,14 @@ impl Player {
             }
         }
 
+        if is_key_down(KeyCode::Space) {
+            self.position.z = self.position.z + 0.5 * settings::PLAYERSPEED;
+        }
+
+        if is_key_down(KeyCode::LeftShift) {
+            self.position.z = self.position.z - 0.5 * settings::PLAYERSPEED;
+        }
+
         if is_key_down(KeyCode::Left) {
             self.position.a = angle_round(self.position.a + 0.1 * settings::PLAYERSPEED);
             self.position.ax = self.position.a.cos();

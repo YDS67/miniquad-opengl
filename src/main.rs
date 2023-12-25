@@ -76,7 +76,7 @@ async fn main() {
 fn draw_words(t_par: &TextParams, player: &player::Player) {
     draw_rectangle(10.0, 10.0, 220.0, 140.0, WHITE);
     draw_rectangle_lines(10.0, 10.0, 220.0, 140.0, 4.0, BLACK);
-    draw_text_ex("Open GL Render", 20.0, 40.0, t_par.clone());
+    draw_text_ex("OpenGL Render", 20.0, 40.0, t_par.clone());
     let fps = get_fps();
     let mut fps_display = fps;
     if fps > 50 && fps < 70 {
@@ -90,7 +90,7 @@ fn draw_words(t_par: &TextParams, player: &player::Player) {
     );
     draw_text_ex("Player position:", 20.0, 100.0, t_par.to_owned());
     draw_text_ex(
-        &format!("({:.1},{:.1})", player.position.x, player.position.y),
+        &format!("({:.1},{:.1},{:.1})", player.position.x, player.position.y, player.position.z),
         20.0,
         130.0,
         t_par.to_owned(),
