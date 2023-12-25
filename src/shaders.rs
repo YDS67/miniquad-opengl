@@ -15,9 +15,9 @@ const float pi = 3.1415926538;
 const float fov = pi/4.0;
 const float asp = 800.0/1280.0;
 
-float dxy, at, phi, u, d, bt, theta, v;
+float at, u, bt, v, d;
 
-vec3 dir1, dir2, nor1, nor2;
+vec3 dir1, dir2, cros, nor1, nor2;
 
 void main() {
 
@@ -26,8 +26,11 @@ void main() {
     nor1 = vec3(0.0,0.0,1.0);
     nor2 = vec3(vec2(playerdir.y,-playerdir.x),0);
 
-    at = atan(dot(cross(dir2, dir1), nor1),dot(dir1, dir2));
-    bt = atan(dot(cross(dir1, dir2), nor2),dot(dir1, dir2));
+    cros = cross(dir1, dir2);
+    d = dot(dir1, dir2);
+
+    at = atan(-dot(cros, nor1),d);
+    bt = atan(dot(cros, nor2),d);
 
     u = 2.0*sin(at)/sin(fov);
     v = 2.0*sin(bt)/sin(fov*asp);
