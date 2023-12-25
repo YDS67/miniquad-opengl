@@ -54,22 +54,14 @@ impl Stage {
             vertices.push(Vertex { pos : Vec3 { x: xi, y: yj, z: 0.0 }, uv: Vec2 { x: 0., y: 4./5. },
                 col: Vec4{x: 0.0, y: 1.0, z: 0.0, w: 1.0} }); // bottom left
             vertices.push(Vertex { pos : Vec3 { x: xi, y: yj+1.0, z: 0.0 }, uv: Vec2 { x: 0., y: 5./5. },
-                col: Vec4{x: 0.0, y: 1.0, z: 0.0, w: 1.0} }); // top left 
-            vertices.push(Vertex { pos : Vec3 { x: xi + 0.5, y: yj+0.5, z: 0.0 }, uv: Vec2 { x: 0.5, y: 4.5/5. },
-                col: Vec4{x: 0.0, y: 1.0, z: 0.0, w: 1.0} }); // center
+                col: Vec4{x: 0.0, y: 1.0, z: 0.0, w: 1.0} }); // top left
 
-            indices.push(5*idx);
-            indices.push(5*idx+1);
-            indices.push(5*idx+4);
-            indices.push(5*idx+1);
-            indices.push(5*idx+2);
-            indices.push(5*idx+4);
-            indices.push(5*idx+2);
-            indices.push(5*idx+3);
-            indices.push(5*idx+4);
-            indices.push(5*idx+3);
-            indices.push(5*idx);
-            indices.push(5*idx+4);
+            indices.push(4*idx);
+            indices.push(4*idx+1);
+            indices.push(4*idx+3);
+            indices.push(4*idx+1);
+            indices.push(4*idx+2);
+            indices.push(4*idx+3);
 
             idx += 1;
         }}
@@ -86,21 +78,13 @@ impl Stage {
                     col: Vec4{x: 0.0, y: 1.0, z: 0.0, w: 1.0} }); // bottom left
                 vertices.push(Vertex { pos : Vec3 { x: xi, y: yj, z: 1.0 }, uv: Vec2 { x: 0., y: 3./5. },
                     col: Vec4{x: 0.0, y: 1.0, z: 0.0, w: 1.0} }); // top left 
-                vertices.push(Vertex { pos : Vec3 { x: xi + 0.5, y: yj, z: 0.5 }, uv: Vec2 { x: 0.5, y: 2.5/5. },
-                    col: Vec4{x: 0.0, y: 1.0, z: 0.0, w: 1.0} }); // center
     
-                indices.push(5*idx);
-                indices.push(5*idx+1);
-                indices.push(5*idx+4);
-                indices.push(5*idx+1);
-                indices.push(5*idx+2);
-                indices.push(5*idx+4);
-                indices.push(5*idx+2);
-                indices.push(5*idx+3);
-                indices.push(5*idx+4);
-                indices.push(5*idx+3);
-                indices.push(5*idx);
-                indices.push(5*idx+4);
+                indices.push(4*idx);
+                indices.push(4*idx+1);
+                indices.push(4*idx+3);
+                indices.push(4*idx+1);
+                indices.push(4*idx+2);
+                indices.push(4*idx+3);
 
                 idx += 1;
             }}
