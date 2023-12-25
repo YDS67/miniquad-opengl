@@ -9,8 +9,8 @@ pub struct PlayerPos {
     pub b: f32,
     pub ax: f32,
     pub ay: f32,
-    pub bx: f32,
-    pub by: f32,
+    pub bxy: f32,
+    pub bz: f32,
     pub cxp: bool,
     pub cyp: bool,
     pub cxm: bool,
@@ -24,17 +24,26 @@ pub struct Player {
 
 impl Player {
     pub fn new() -> Player {
+        let x = settings::PLAYERX0;
+        let y = settings::PLAYERY0;
+        let z = settings::PLAYERHEIGHT;
+        let a = settings::PLAYERA0;
+        let b = settings::PLAYERB0;
+        let ax = settings::PLAYERA0.cos();
+        let ay = settings::PLAYERA0.sin();
+        let bxy = settings::PLAYERB0.cos();
+        let bz = settings::PLAYERB0.sin();
         Player {
             position: PlayerPos {
-                x: settings::PLAYERX0,
-                y: settings::PLAYERY0,
-                z: settings::PLAYERHEIGHT,
-                a: settings::PLAYERA0,
-                b: settings::PLAYERB0,
-                ax: settings::PLAYERA0.cos(),
-                ay: settings::PLAYERA0.sin(),
-                bx: settings::PLAYERB0.cos(),
-                by: settings::PLAYERB0.sin(),
+                x,
+                y,
+                z,
+                a,
+                b,
+                ax,
+                ay,
+                bxy,
+                bz,
                 cxp: false,
                 cyp: false,
                 cxm: false,
@@ -74,44 +83,44 @@ impl Player {
 
         if is_key_down(KeyCode::A) {
             if !self.position.cxm {
-                self.position.x = self.position.x - settings::PLAYERSPEED * self.position.ay;
+                self.position.x = self.position.x - 0.5 * settings::PLAYERSPEED * self.position.ay;
             }
             if !self.position.cym {
-                self.position.y = self.position.y + settings::PLAYERSPEED * self.position.ax;
+                self.position.y = self.position.y + 0.5 * settings::PLAYERSPEED * self.position.ax;
             }
         }
 
         if is_key_down(KeyCode::D) {
             if !self.position.cxm {
-                self.position.x = self.position.x + settings::PLAYERSPEED * self.position.ay;
+                self.position.x = self.position.x + 0.5 * settings::PLAYERSPEED * self.position.ay;
             }
             if !self.position.cym {
-                self.position.y = self.position.y - settings::PLAYERSPEED * self.position.ax;
+                self.position.y = self.position.y - 0.5 * settings::PLAYERSPEED * self.position.ax;
             }
         }
 
         if is_key_down(KeyCode::Left) {
-            self.position.a = angle_round(self.position.a + 0.2 * settings::PLAYERSPEED);
+            self.position.a = angle_round(self.position.a + 0.1 * settings::PLAYERSPEED);
             self.position.ax = self.position.a.cos();
             self.position.ay = self.position.a.sin();
         }
 
         if is_key_down(KeyCode::Right) {
-            self.position.a = angle_round(self.position.a - 0.2 * settings::PLAYERSPEED);
+            self.position.a = angle_round(self.position.a - 0.1 * settings::PLAYERSPEED);
             self.position.ax = self.position.a.cos();
             self.position.ay = self.position.a.sin();
         }
 
-        if is_key_down(KeyCode::Down) && self.position.b < settings::PI/2.0 {
+        if is_key_down(KeyCode::Down) && self.position.b < settings::PI/2.5 {
             self.position.b = self.position.b + 0.1 * settings::PLAYERSPEED;
-            self.position.bx = self.position.b.cos();
-            self.position.by = self.position.b.sin();
+            self.position.bxy = self.position.b.cos();
+            self.position.bz = self.position.b.sin();
         }
 
-        if is_key_down(KeyCode::Up) && self.position.b > -settings::PI/2.0 {
+        if is_key_down(KeyCode::Up) && self.position.b > -settings::PI/2.5 {
             self.position.b = self.position.b - 0.1 * settings::PLAYERSPEED;
-            self.position.bx = self.position.b.cos();
-            self.position.by = self.position.b.sin();
+            self.position.bxy = self.position.b.cos();
+            self.position.bz = self.position.b.sin();
         }
 
     }

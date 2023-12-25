@@ -6,42 +6,36 @@ attribute vec2 uv;
 attribute vec4 col;
 
 uniform vec3 playerpos;
-uniform vec2 playerdir;
+uniform vec4 playerdir;
 
 varying lowp vec3 texcoord;
 varying lowp vec4 cols;
 
-float pi, fov, asp, dxy, at, phi, u, d, bt, theta, v;
+const float pi = 3.1415926538;
+const float fov = pi/4.0;
+const float asp = 800.0/1280.0;
 
-// float angle_to_range(float pi, float a) {
-//     while (a <= -pi/2.0) {
-//         a += 2.0*pi;
-//     };
-//     while (a >= pi/2.0) {
-//         a -= 2.0*pi;
-//     };
-//     return a;
-// };
+float dxy, at, phi, u, d, bt, theta, v;
+
+vec3 dir1, dir2, nor1, nor2;
 
 void main() {
-    pi = 3.1415926538;
-    fov = pi/2.0;
-    asp = 800.0/1280.0;
 
-    dxy = distance(playerpos.xy, pos.xy);
-    at = sign(pos.y-playerpos.y) * acos((pos.x-playerpos.x)/dxy);
-    phi = fov/2.0 + playerdir.x - at;
-    u = 2.0 * sin(playerdir.x - at)/sin(fov/2.0);
+    dir1 = vec3(playerdir.xy*playerdir.w, playerdir.z);
+    dir2 = pos - playerpos;
+    nor1 = vec3(0.0,0.0,1.0);
+    nor2 = vec3(vec2(playerdir.y,-playerdir.x),0);
 
-    d = distance(playerpos, pos);
-    bt = pi/2.0 - acos((pos.z-playerpos.z)/d);
-    theta = asp * fov/2.0 + playerdir.y - bt;
-    v = 2.0 * sin(playerdir.y - bt)/sin(fov*asp/2.0);
+    at = atan(dot(cross(dir2, dir1), nor1),dot(dir1, dir2));
+    bt = atan(dot(cross(dir1, dir2), nor2),dot(dir1, dir2));
+
+    u = 2.0*sin(at)/sin(fov);
+    v = 2.0*sin(bt)/sin(fov*asp);
 
     gl_Position = vec4(u, v, 0, 1);
     texcoord = vec3(uv,1.0);
 
-    if (phi < 0.0 || phi > fov || theta < 0.0 || theta > asp * fov) {
+    if (at < -1.4*fov || at > 1.4*fov || bt < -1.4*fov*asp || bt > 1.4*fov*asp) {
         cols = vec4(1.0,1.0,1.0,0.0);
     } else {
         cols = col;
@@ -67,7 +61,7 @@ pub fn meta() -> ShaderMeta {
     ShaderMeta {
         images: vec!["tex".to_string()],
         uniforms: UniformBlockLayout {
-            uniforms: vec![UniformDesc::new("playerpos", UniformType::Float3), UniformDesc::new("playerdir", UniformType::Float2)],
+            uniforms: vec![UniformDesc::new("playerpos", UniformType::Float3), UniformDesc::new("playerdir", UniformType::Float4)],
         },
     }
 }
@@ -75,5 +69,5 @@ pub fn meta() -> ShaderMeta {
 #[repr(C)]
 pub struct Uniforms {
     pub playerpos: (f32, f32, f32),
-    pub playerdir: (f32, f32),
+    pub playerdir: (f32, f32, f32, f32),
 }

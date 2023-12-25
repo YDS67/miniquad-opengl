@@ -60,9 +60,9 @@ async fn main() {
             gl.quad_context
                 .apply_uniforms(miniquad::UniformsSource::table(&shaders::Uniforms {
                     playerpos: (player.position.x, player.position.y, player.position.z),
-                    playerdir: (player.position.a, player.position.b),
+                    playerdir: (player.position.ax, player.position.ay, player.position.bz, player.position.bxy),
                 }));
-            gl.quad_context.draw(0, 36, 1);
+            gl.quad_context.draw(0, 1320, 1);
 
             gl.quad_context.end_render_pass();
         }
