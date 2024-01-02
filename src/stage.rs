@@ -97,8 +97,8 @@ impl Stage {
             input_state: InputState::init(),
             screen_state: ScreenState::init(),
             uniforms: shaders::UniformsMain{
-                width: 1.0,
-                height: 1.0,
+                width: 0.5,
+                height: 0.5,
             }
         }
     }

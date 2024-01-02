@@ -12,13 +12,13 @@ mod shaders;
 
 fn window_conf() -> Conf {
     let mut conf = Conf {
-        window_title: "Computer Graphics From Scratch".to_owned(),
+        window_title: "WASD to change the rectangle size, F for fullscreen, Esc to quit".to_owned(),
         window_width: WIDTH0,
         window_height: HEIGHT0,
         platform: Platform::default(),
         ..Default::default()
     };
-    conf.platform.swap_interval = Some(1);
+    conf.platform.swap_interval = Some(-1);
     conf
 }
 
