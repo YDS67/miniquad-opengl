@@ -9,7 +9,8 @@ pub fn meta_main() -> ShaderMeta {
         images: vec!["tex".to_string()],
         uniforms: UniformBlockLayout {
             uniforms: vec![
-                UniformDesc::new("value", UniformType::Float1),
+                UniformDesc::new("width", UniformType::Float1),
+                UniformDesc::new("height", UniformType::Float1),
             ],
         },
     }
@@ -17,5 +18,6 @@ pub fn meta_main() -> ShaderMeta {
 
 #[repr(C)]
 pub struct UniformsMain {
-    pub value: f32,
+    pub width: f32,
+    pub height: f32,
 }

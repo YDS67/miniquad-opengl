@@ -20,6 +20,8 @@ pub struct Stage {
     time_state: TimeState,
     input_state: InputState,
     screen_state: ScreenState,
+
+    uniforms: shaders::UniformsMain,
 }
 
 impl Stage {
@@ -94,6 +96,10 @@ impl Stage {
             time_state: TimeState::init(),
             input_state: InputState::init(),
             screen_state: ScreenState::init(),
+            uniforms: shaders::UniformsMain{
+                width: 1.0,
+                height: 1.0,
+            }
         }
     }
 
@@ -134,6 +140,20 @@ impl EventHandler for Stage {
             miniquad::window::quit()
         }
 
+        if self.input_state.keys.w  && self.uniforms.height < 1.0{
+            self.uniforms.height += self.time_state.frame_time
+        }
+        if self.input_state.keys.s && self.uniforms.height > 0.0 {
+            self.uniforms.height -= self.time_state.frame_time
+        }
+
+        if self.input_state.keys.d  && self.uniforms.width < 1.0{
+            self.uniforms.width += self.time_state.frame_time
+        }
+        if self.input_state.keys.a && self.uniforms.width > 0.0 {
+            self.uniforms.width -= self.time_state.frame_time
+        }
+
         self.time_state.tick_count += 1;
     }
 
@@ -146,11 +166,7 @@ impl EventHandler for Stage {
         self.ctx.apply_bindings(&self.bindings_main);
 
         self.ctx
-            .apply_uniforms(miniquad::UniformsSource::table(
-                &shaders::UniformsMain{
-                    value: 0.5,
-                }
-            ));
+            .apply_uniforms(miniquad::UniformsSource::table(&self.uniforms));
         self.ctx.draw(0, self.mesh_main.num * 6, 1);
 
         self.ctx.end_render_pass();
