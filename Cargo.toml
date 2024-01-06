@@ -1,5 +1,5 @@
 [package]
-name = "yds-game-miniquad"
+name = "miniquad-opengl-example"
 version = "0.1.0"
 edition = "2021"
 
