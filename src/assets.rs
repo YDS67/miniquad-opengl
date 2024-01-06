@@ -17,7 +17,7 @@ impl Assets {
         let image = image::open(Path::new("resources/texture.png"));
             let tex: ImageBuffer<Rgba<u8>, Vec<u8>> = match image {
                 Ok(image_result) => image_result.to_rgba8(),
-                Err(_image_error) => img.clone()
+                Err(_image_error) => img
             };
         Assets {
             tex,
