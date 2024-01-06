@@ -16,7 +16,7 @@ fn window_conf() -> Conf {
         window_width: WIDTH0,
         window_height: HEIGHT0,
         platform: Platform::default(),
-        window_resizable: false,
+        window_resizable: true,
         ..Default::default()
     };
     conf.platform.swap_interval = Some(-1);

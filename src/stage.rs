@@ -17,10 +17,10 @@ struct Proj {
 }
 
 impl Proj {
-    fn new(angle_x: f32, angle_y: f32) -> Proj {
+    fn new(angle_x: f32, angle_y: f32, asp: f32) -> Proj {
         let proj = Mat4::perspective_rh_gl(
             45.0/180.0*3.14159,
-            crate::WIDTH0 as f32/crate::HEIGHT0 as f32,
+            asp,
             0.1,
             10.0,
         );
@@ -115,7 +115,7 @@ impl Stage {
             shader,
         );
 
-        let proj = Proj::new(0.0, 0.0);
+        let proj = Proj::new(0.0, 0.0, crate::WIDTH0 as f32/crate::HEIGHT0 as f32);
 
         Stage {
             ctx,
@@ -189,7 +189,7 @@ impl EventHandler for Stage {
 
         self.ctx.apply_bindings(&self.bindings);
 
-        self.uniforms.mvp = Proj::new(self.angles.0, self.angles.1).mvp;
+        self.uniforms.mvp = Proj::new(self.angles.0, self.angles.1, self.screen_state.width/self.screen_state.height).mvp;
 
         self.ctx
             .apply_uniforms(miniquad::UniformsSource::table(&self.uniforms));
