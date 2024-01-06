@@ -3,14 +3,13 @@ in vec3 pos;
 in vec4 col;
 in vec2 uv;
 
-uniform float width;
-uniform float height;
+uniform mat4 mvp;
 
 out vec4 cols;
 out vec2 uvs;
 
 void main() {
-    gl_Position = vec4(pos*vec3(width, height, 0.0), 1.0);
+    gl_Position = mvp * vec4(pos, 1.0);
 
     cols = col;
     uvs = uv;

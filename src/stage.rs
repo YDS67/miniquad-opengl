@@ -1,4 +1,5 @@
 use miniquad::*;
+use glam::{vec3, Mat4};
 use image::{self, EncodableLayout};
 
 use std::thread::sleep;
@@ -10,18 +11,46 @@ use crate::assets;
 use crate::mesh;
 use crate::shaders;
 
+#[derive(Debug, Clone)]
+struct Proj {
+    mvp: Mat4,
+}
+
+impl Proj {
+    fn new(angle_x: f32, angle_y: f32) -> Proj {
+        let proj = Mat4::perspective_rh_gl(
+            45.0/180.0*3.14159,
+            crate::WIDTH0 as f32/crate::HEIGHT0 as f32,
+            0.1,
+            10.0,
+        );
+
+        let rotx = Mat4::from_rotation_y(angle_x);
+        let roty = Mat4::from_rotation_z(angle_y);
+
+        let view = Mat4::look_to_lh(
+            vec3(0.0, 0.0, 2.0),
+            vec3(0.0, 0.0, 1.0),
+            vec3(0.0, 1.0, 0.0),
+        );
+        let mvp = proj * view * rotx * roty;
+        Proj { mvp }
+    }
+}
+
 pub struct Stage {
     ctx: Box<dyn RenderingBackend>,
 
-    mesh_main: mesh::Mesh,
-    pipeline_main: Pipeline,
-    bindings_main: Bindings,
+    mesh: mesh::Mesh,
+    pipeline: Pipeline,
+    bindings: Bindings,
 
     time_state: TimeState,
     input_state: InputState,
     screen_state: ScreenState,
 
     uniforms: shaders::UniformsMain,
+    angles: (f32, f32),
 }
 
 impl Stage {
@@ -30,7 +59,7 @@ impl Stage {
 
         let assets = assets::Assets::load();
 
-        let mesh_main = mesh::Mesh::new_main();
+        let mesh = mesh::Mesh::new();
 
         let pixels = assets.tex;
         let dims = pixels.dimensions();
@@ -46,60 +75,65 @@ impl Stage {
             height: dims.1,
             allocate_mipmaps: true,
         };
-        let texture_main = ctx.new_texture_from_data_and_format(pixels.as_bytes(), params);
-        ctx.texture_generate_mipmaps(texture_main);
+        let texture = ctx.new_texture_from_data_and_format(pixels.as_bytes(), params);
+        ctx.texture_generate_mipmaps(texture);
 
-        let vertex_buffer_main = ctx.new_buffer(
+        let vertex_buffer = ctx.new_buffer(
             BufferType::VertexBuffer,
             BufferUsage::Immutable,
-            BufferSource::slice(&mesh_main.vertices),
+            BufferSource::slice(&mesh.vertices),
         );
 
-        let index_buffer_main = ctx.new_buffer(
+        let index_buffer = ctx.new_buffer(
             BufferType::IndexBuffer,
             BufferUsage::Immutable,
-            BufferSource::slice(&mesh_main.indices),
+            BufferSource::slice(&mesh.indices),
         );
 
-        let bindings_main = Bindings {
-            vertex_buffers: vec![vertex_buffer_main],
-            index_buffer: index_buffer_main,
-            images: vec![texture_main],
+        let bindings = Bindings {
+            vertex_buffers: vec![vertex_buffer],
+            index_buffer,
+            images: vec![texture],
         };
 
-        let shader_main = ctx
+        let shader = ctx
             .new_shader(
                 miniquad::ShaderSource::Glsl {
-                    vertex: shaders::VERTEX_MAIN,
-                    fragment: shaders::FRAGMENT_MAIN,
+                    vertex: shaders::VERTEX,
+                    fragment: shaders::FRAGMENT,
                 },
-                shaders::meta_main(),
+                shaders::meta(),
             )
             .unwrap();
 
-        let pipeline_main = ctx.new_pipeline(
+        let pipeline = ctx.new_pipeline(
             &[BufferLayout::default()],
             &[
                 VertexAttribute::new("pos", VertexFormat::Float3),
                 VertexAttribute::new("col", VertexFormat::Float4),
                 VertexAttribute::new("uv", VertexFormat::Float2),
             ],
-            shader_main,
+            shader,
         );
+
+        let proj = Proj::new(0.0, 0.0);
 
         Stage {
             ctx,
 
-            mesh_main,
-            pipeline_main,
-            bindings_main,
+            mesh,
+            pipeline,
+            bindings,
+
             time_state: TimeState::init(),
             input_state: InputState::init(),
             screen_state: ScreenState::init(),
+
             uniforms: shaders::UniformsMain{
-                width: 0.5,
-                height: 0.5,
-            }
+                mvp: proj.mvp,
+            },
+
+            angles: (0.0, 0.0),
         }
     }
 
@@ -128,30 +162,22 @@ impl EventHandler for Stage {
         self.frame_time();
         self.show_data();
 
-        if self.input_state.keys.f && !self.screen_state.full_screen {
-            miniquad::window::set_fullscreen(true);
-            self.screen_state.full_screen = true;
-            let screen_size = window::screen_size();
-            self.screen_state.width = screen_size.0;
-            self.screen_state.height = screen_size.1;
-        }
-
         if self.input_state.keys.esc {
             miniquad::window::quit()
         }
 
-        if self.input_state.keys.w  && self.uniforms.height < 1.0{
-            self.uniforms.height += self.time_state.frame_time
+        if self.input_state.keys.a {
+            self.angles.0 += 4.0*self.time_state.frame_time;
         }
-        if self.input_state.keys.s && self.uniforms.height > 0.0 {
-            self.uniforms.height -= self.time_state.frame_time
+        if self.input_state.keys.d {
+            self.angles.0 -= 4.0*self.time_state.frame_time;
         }
 
-        if self.input_state.keys.d  && self.uniforms.width < 1.0{
-            self.uniforms.width += self.time_state.frame_time
+        if self.input_state.keys.w {
+            self.angles.1 += 4.0*self.time_state.frame_time;
         }
-        if self.input_state.keys.a && self.uniforms.width > 0.0 {
-            self.uniforms.width -= self.time_state.frame_time
+        if self.input_state.keys.s {
+            self.angles.1 -= 4.0*self.time_state.frame_time;
         }
 
         self.time_state.tick_count += 1;
@@ -159,15 +185,17 @@ impl EventHandler for Stage {
 
     fn draw(&mut self) {
         self.ctx
-            .begin_default_pass(miniquad::PassAction::clear_color(0., 0., 0., 1.0000000));
+            .begin_default_pass(miniquad::PassAction::clear_color(0.8, 0.8, 0.8, 1.0000000));
 
-        self.ctx.apply_pipeline(&self.pipeline_main);
+        self.ctx.apply_pipeline(&self.pipeline);
 
-        self.ctx.apply_bindings(&self.bindings_main);
+        self.ctx.apply_bindings(&self.bindings);
+
+        self.uniforms.mvp = Proj::new(self.angles.0, self.angles.1).mvp;
 
         self.ctx
             .apply_uniforms(miniquad::UniformsSource::table(&self.uniforms));
-        self.ctx.draw(0, self.mesh_main.num * 6, 1);
+        self.ctx.draw(0, self.mesh.num * 6, 1);
 
         self.ctx.end_render_pass();
 
@@ -216,7 +244,6 @@ impl EventHandler for Stage {
 }
 
 struct ScreenState {
-    full_screen: bool,
     width: f32,
     height: f32,
 }
@@ -224,7 +251,6 @@ struct ScreenState {
 impl ScreenState {
     fn init() -> ScreenState {
         ScreenState {
-            full_screen: false,
             width: crate::WIDTH0 as f32,
             height: crate::HEIGHT0 as f32,
         }

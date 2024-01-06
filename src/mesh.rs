@@ -33,39 +33,39 @@ pub struct Mesh {
 }
 
 impl Mesh {
-    pub fn new_main() -> Mesh {
+    pub fn new() -> Mesh {
         let mut vertices: Vec<Vertex> = Vec::new();
         let mut indices: Vec<i16> = Vec::new();
 
         let mut idx = 0;
 
-        let x = 1.0;
-        let y = -1.0;
+        let x = 0.5;
+        let y = -0.5;
         vertices.push(Vertex {
             pos: Vec3 { x, y, z: 0.0 },
             col: Vec4 { x: 1.0, y: 0.0, z: 0.0, w: 1.0},
-            uv: Vec2 {x: 1.0, y: 0.0},
+            uv: Vec2 {x: 1.0, y: 1.0},
         }); // top right
-        let x = 1.0;
-        let y = 1.0;
+        let x = 0.5;
+        let y = 0.5;
         vertices.push(Vertex {
             pos: Vec3 { x, y, z: 0.0 },
             col: Vec4 { x: 1.0, y: 1.0, z: 0.0, w: 1.0},
-            uv: Vec2 {x: 1.0, y: 1.0},
+            uv: Vec2 {x: 1.0, y: 0.0},
         }); // bottom right
-        let x = -1.0;
-        let y = 1.0;
+        let x = -0.5;
+        let y = 0.5;
         vertices.push(Vertex {
             pos: Vec3 { x, y, z: 0.0 },
             col: Vec4 { x: 0.0, y: 0.0, z: 1.0, w: 1.0},
-            uv: Vec2 {x: 0.0, y: 1.0},
+            uv: Vec2 {x: 0.0, y: 0.0},
         }); // bottom left
-        let x = -1.0;
-        let y = -1.0;
+        let x = -0.5;
+        let y = -0.5;
         vertices.push(Vertex {
             pos: Vec3 { x, y, z: 0.0 },
             col: Vec4 { x: 0.0, y: 1.0, z: 0.0, w: 1.0},
-            uv: Vec2 {x: 0.0, y: 0.0},
+            uv: Vec2 {x: 0.0, y: 1.0},
         }); // top left
 
         indices.push(4 * idx);
