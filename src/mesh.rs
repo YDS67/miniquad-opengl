@@ -19,6 +19,18 @@ struct Vec4 {
     w: f32,
 }
 
+fn vec2(x: f32, y: f32) -> Vec2 {
+    Vec2 {x, y}
+}
+
+fn vec3(x: f32, y: f32, z: f32) -> Vec3 {
+    Vec3 {x, y, z}
+}
+
+fn vec4(x: f32, y: f32, z: f32, w: f32) -> Vec4 {
+    Vec4 {x, y, z, w}
+}
+
 #[repr(C)]
 pub struct Vertex {
     pos: Vec3,
@@ -29,7 +41,6 @@ pub struct Vertex {
 pub struct Mesh {
     pub vertices: Vec<Vertex>,
     pub indices: Vec<i16>,
-    pub num: i32,
 }
 
 impl Mesh {
@@ -37,50 +48,45 @@ impl Mesh {
         let mut vertices: Vec<Vertex> = Vec::new();
         let mut indices: Vec<i16> = Vec::new();
 
-        let mut idx = 0;
-
         let x = 0.5;
-        let y = -0.5;
+        let y = 0.5;
         vertices.push(Vertex {
-            pos: Vec3 { x, y, z: 0.0 },
-            col: Vec4 { x: 1.0, y: 0.0, z: 0.0, w: 1.0},
-            uv: Vec2 {x: 1.0, y: 1.0},
+            pos: vec3(x, y, 0.0),
+            col: vec4(1.0, 0.0, 0.0, 1.0),
+            uv: vec2(1.0, 0.0),
         }); // top right
         let x = 0.5;
-        let y = 0.5;
+        let y = -0.5;
         vertices.push(Vertex {
-            pos: Vec3 { x, y, z: 0.0 },
-            col: Vec4 { x: 1.0, y: 1.0, z: 0.0, w: 1.0},
-            uv: Vec2 {x: 1.0, y: 0.0},
+            pos: vec3(x, y, 0.0),
+            col: vec4(1.0, 1.0, 0.0, 1.0),
+            uv: vec2(1.0, 1.0),
         }); // bottom right
-        let x = -0.5;
-        let y = 0.5;
-        vertices.push(Vertex {
-            pos: Vec3 { x, y, z: 0.0 },
-            col: Vec4 { x: 0.0, y: 0.0, z: 1.0, w: 1.0},
-            uv: Vec2 {x: 0.0, y: 0.0},
-        }); // bottom left
         let x = -0.5;
         let y = -0.5;
         vertices.push(Vertex {
-            pos: Vec3 { x, y, z: 0.0 },
-            col: Vec4 { x: 0.0, y: 1.0, z: 0.0, w: 1.0},
-            uv: Vec2 {x: 0.0, y: 1.0},
+            pos: vec3(x, y, 0.0),
+            col: vec4(0.0, 0.0, 1.0, 1.0),
+            uv: vec2(0.0, 1.0),
+        }); // bottom left
+        let x = -0.5;
+        let y = 0.5;
+        vertices.push(Vertex {
+            pos: vec3(x, y, 0.0),
+            col: vec4(0.0, 1.0, 0.0, 1.0),
+            uv: vec2(0.0, 0.0),
         }); // top left
 
-        indices.push(4 * idx);
-        indices.push(4 * idx + 1);
-        indices.push(4 * idx + 3);
-        indices.push(4 * idx + 1);
-        indices.push(4 * idx + 2);
-        indices.push(4 * idx + 3);
-
-        idx = idx + 1;
+        indices.push(0);
+        indices.push(1);
+        indices.push(3);
+        indices.push(1);
+        indices.push(2);
+        indices.push(3);
             
         Mesh {
             vertices,
             indices,
-            num: idx as i32,
         }
     }
 
