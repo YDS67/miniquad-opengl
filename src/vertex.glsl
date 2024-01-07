@@ -5,14 +5,14 @@ in vec2 uv;
 
 uniform mat4 mvp;
 
-out vec4 cols;
-out vec2 uvs;
-out vec2 poss;
+out vec4 v_col;
+out vec2 v_uv;
+out vec2 v_pos;
 
 void main() {
-    poss = pos.xy;
+    v_pos = pos.xy;
     gl_Position = mvp * vec4(pos, 1.0);
 
-    cols = col;
-    uvs = uv;
+    v_col = col;
+    v_uv = uv;
 }
