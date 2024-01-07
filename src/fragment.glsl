@@ -8,7 +8,7 @@ out vec4 FragColor;
 uniform sampler2D tex;
 
 void main() {
-    if (length(v_pos) > 0.5) {
+    if (v_pos.x*v_pos.x*v_pos.x*v_pos.x+v_pos.y*v_pos.y*v_pos.y*v_pos.y > 0.5*0.5*0.5*0.5) {
         discard;
     } else {
         FragColor = 0.5*(v_col+texture(tex, v_uv));
