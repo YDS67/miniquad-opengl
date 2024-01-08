@@ -5,7 +5,7 @@ use image::{self, EncodableLayout};
 use std::thread::sleep;
 use std::time::Duration;
 
-const FT_DESIRED: f32 = 0.01666666666667;
+const FT_DESIRED: f64 = 0.01666666666667;
 
 use crate::assets;
 use crate::mesh;
@@ -136,13 +136,13 @@ impl Stage {
     }
 
     fn frame_time(&mut self) {
-        self.time_state.frame_time = self.time_state.last_frame.elapsed().as_secs_f32();
+        self.time_state.frame_time = date::now() - self.time_state.last_frame;
         if self.time_state.frame_time < FT_DESIRED {
-            sleep(Duration::from_secs_f32(
+            sleep(Duration::from_secs_f64(
                 FT_DESIRED - self.time_state.frame_time,
             ));
         }
-        self.time_state.frame_time = self.time_state.last_frame.elapsed().as_secs_f32();
+        self.time_state.frame_time = date::now() - self.time_state.last_frame;
         self.time_state.fps = (1. / self.time_state.frame_time).floor() as i32 + 1;
     }
 
@@ -165,17 +165,17 @@ impl EventHandler for Stage {
         }
 
         if self.input_state.keys.a {
-            self.angles.0 += 4.0*self.time_state.frame_time;
+            self.angles.0 += 4.0*self.time_state.frame_time as f32;
         }
         if self.input_state.keys.d {
-            self.angles.0 -= 4.0*self.time_state.frame_time;
+            self.angles.0 -= 4.0*self.time_state.frame_time as f32;
         }
 
         if self.input_state.keys.w {
-            self.angles.1 += 4.0*self.time_state.frame_time;
+            self.angles.1 += 4.0*self.time_state.frame_time as f32;
         }
         if self.input_state.keys.s {
-            self.angles.1 -= 4.0*self.time_state.frame_time;
+            self.angles.1 -= 4.0*self.time_state.frame_time as f32;
         }
 
         self.time_state.tick_count += 1;
@@ -199,7 +199,7 @@ impl EventHandler for Stage {
 
         self.ctx.commit_frame();
 
-        self.time_state.last_frame = Some(std::time::Instant::now()).unwrap();
+        self.time_state.last_frame = date::now();
 
         self.time_state.frame_count += 1;
     }
@@ -256,8 +256,8 @@ impl ScreenState {
 }
 
 struct TimeState {
-    last_frame: std::time::Instant,
-    frame_time: f32,
+    last_frame: f64,
+    frame_time: f64,
     tick_count: u128,
     frame_count: u128,
     fps: i32,
@@ -266,7 +266,7 @@ struct TimeState {
 impl TimeState {
     fn init() -> TimeState {
         TimeState {
-            last_frame: Some(std::time::Instant::now()).unwrap(),
+            last_frame: date::now(),
             frame_time: 1.0 / 60.0,
             tick_count: 0,
             frame_count: 0,
