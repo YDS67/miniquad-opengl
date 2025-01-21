@@ -70,6 +70,7 @@ impl Stage {
             min_filter: FilterMode::Linear,
             mag_filter: FilterMode::Linear,
             mipmap_filter: MipmapFilterMode::None,
+            sample_count: 0,
             width: dims.0,
             height: dims.1,
             allocate_mipmaps: true,
@@ -113,6 +114,7 @@ impl Stage {
                 VertexAttribute::new("uv", VertexFormat::Float2),
             ],
             shader,
+            PipelineParams::default(),
         );
 
         let proj = Proj::new(0.0, 0.0, crate::WIDTH0 as f32/crate::HEIGHT0 as f32);
